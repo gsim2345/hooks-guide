@@ -8,15 +8,17 @@ const Todo = props => {
     //0. Current state - the full state 
     //1. inputState[1] - Reference to a function, that we can execute to update the state. that returns the full event object. - 
 
-    const inputState = useState('');
+    // we use array destructuring. We can pull out elements of an array, and store them in separate variables.
+    const [todoName, setTodoName] = useState('');
+    
 
     const inputChangeHandler = (event) => {
         // we execute this function to update the state with passing in the updated state
-        inputState[1](event.target.value);
+        setTodoName(event.target.value);
     };
 
     return <React.Fragment>
-        <input type="text" placeholder="Todo" onChange={inputChangeHandler} value={inputState[0]}/>
+        <input type="text" placeholder="Todo" onChange={inputChangeHandler} value={todoName}/>
         <button type="button">Add</button>
         <ul></ul>
     </React.Fragment>
