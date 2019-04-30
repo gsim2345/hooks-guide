@@ -10,6 +10,10 @@ const Todo = props => {
 
     // we use array destructuring. We can pull out elements of an array, and store them in separate variables.
     const [todoName, setTodoName] = useState('');
+    // we can add as much new state as we want:
+    // item 0 => curent state (todoList)
+    // item 1 => function to update state with new value
+    const [todoList, setTodoList] = useState([]);
     
 
     const inputChangeHandler = (event) => {
@@ -17,10 +21,18 @@ const Todo = props => {
         setTodoName(event.target.value);
     };
 
+    const todoAddHandler = () => {
+        setTodoList(todoList.concat(todoName));
+    }
+
     return <React.Fragment>
         <input type="text" placeholder="Todo" onChange={inputChangeHandler} value={todoName}/>
-        <button type="button">Add</button>
-        <ul></ul>
+        <button type="button" onClick={todoAddHandler}>Add</button>
+        <ul>
+            {todoList.map(todo => (
+                <li key={todo}>{todo}</li>
+            ))}
+        </ul>
     </React.Fragment>
 };
 
