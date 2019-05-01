@@ -44,8 +44,33 @@ const Todo = props => {
             }
             console.log(todos);
             setTodoList(todos);
-        })
-    }, [todoName] );
+        });
+
+        // We can add a cleanup , to clean up after the last useEffect call
+        return () => {
+            console.log('Cleanup');
+        }
+    }, [] );
+
+    const mouseMoveHandler = event => {
+        console.log(event.clientX, event.clientY);
+    }
+
+    // example for cleanup
+    // in this case useEffect will be called at every render cycle, and will add new event listeners at every render. 
+    // results in really bad performance. 
+    // we want to clean up the old listener before we attach a new one. 
+    useEffect(() => {
+        // listening to mouse movements
+        document.addEventListener('mousemove', mouseMoveHandler);
+        // add a cleanup function here:
+        return () => {
+            document.removeEventListener('mousemove', mouseMoveHandler);
+        }
+    // by adding [] 
+    //=> adding event listener only when component gets loaded 
+    //=> cleanup happens only at when component gets destroyed. (at componentWillUnmount())
+    }, [] );
 
     const inputChangeHandler = (event) => {
         // we execute this function to update the state with passing in the updated state
