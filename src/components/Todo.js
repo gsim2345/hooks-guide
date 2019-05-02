@@ -84,12 +84,14 @@ const Todo = props => {
         //setTodoState({userInput: todoState.userInput, todoList: todoState.todoList.concat(todoState.userInput)});
         axios.post('https://test-hooks-7593f.firebaseio.com/todos.json', {name: todoName})
         .then(res => {
-            const todoItem = {id: res.data.name, name: todoName}
-            console.log(res);
-            // we add here instead, after the post request successeded, so we can save the id we get back
-            //setTodoList(todoList.concat(todoItem));
-            // because setTodoList is executing asyncrunously, using that form with the prevTodoList can avoid update issues. 
-            setTodoList(prevTodoList => prevTodoList.concat(todoItem))
+            setTimeout(() => {
+                const todoItem = {id: res.data.name, name: todoName}
+                console.log(res);
+                // if we use this update, and we add new items very fast, not all of them will be rendered to the screen, as the state updates async, and doesn't allways have the correct state.
+                //setTodoList(todoList.concat(todoItem));
+                // To avoid update issues, needs to use with prevState: 
+                setTodoList(prevTodoList => prevTodoList.concat(todoItem))
+            }, 3000);
         })
         .catch(err => {
             console.log(err);
