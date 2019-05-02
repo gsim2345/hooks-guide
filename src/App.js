@@ -1,17 +1,29 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Todo from './components/Todo';
 import Header from './components/Header';
 import Auth from './components/Auth';
 
-function App() {
+const App = props => {
+
+  const [page, setPage] = useState('auth');
+
+  const switchPage = (pageName) => {
+    setPage(pageName);
+  };
+
+  //onLoadTodos={switchPage.bind(this, 'todos')} is the same as  
+  //onLoadTodos={() => switchPage('todos')}
+
   return (
     <div className="App">
-      <Header />
+      <Header onLoadTodos={switchPage.bind(this, 'todos')} onLoadAuth={switchPage.bind(this, 'auth')}/>
       <hr />
-      <Todo />
-      <Auth />
+      {page === 'auth' ? <Auth/> : <Todo />}
+      
+      
     </div>
   );
-}
+  }
+
 
 export default App;
