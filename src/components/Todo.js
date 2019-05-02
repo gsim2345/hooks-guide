@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer} from 'react';
 import axios from 'axios';
 
 
@@ -16,10 +16,32 @@ const Todo = props => {
     // we can add as much new state as we want:
     // item 0 => curent state (todoList)
     // item 1 => function to update state with new value
-    const [todoList, setTodoList] = useState([]);
+    // useReducer is an alternative to that
+    //const [todoList, setTodoList] = useState([]);
 
     // we add another state (solution for avoiding update issues)
     const [submittedTodo, setSubmittedTodo] = useState(null);
+
+    const todoListReducer = (state, action) => {
+        switch(action.type) {
+            case 'ADD':
+                return state.concat(action.payload);
+            case 'SET':
+                return action.payload;
+            case 'REMOVE':
+                return state.filter((todo) => {
+                    return todo.id !== action.payload
+                });
+            default: 
+                return state;
+        }
+    }
+
+    // 1. argument: reducer
+    // 2. argument: starting state
+    // 3. argument: might be an action we want to execute
+    // we get back an array with two elements
+    const [todoList, dispatch] = useReducer(todoListReducer, []);
 
     // We can also merge states into an object: 
     // But using separate is more readable, and managable.
@@ -46,7 +68,11 @@ const Todo = props => {
                 todos.push({id: key, name: todoData[key].name})
             }
             console.log(todos);
-            setTodoList(todos);
+            
+            //setTodoList(todos);
+            // with useReducer we dispatch an action instead: 
+            dispatch({type: "SET", payload: todos});
+
         });
 
         // We can add a cleanup , to clean up after the last useEffect call
@@ -80,7 +106,9 @@ const Todo = props => {
         //this will run on every render cycle and a render cycle will be triggered when we call set submitted todo here because whenever the state changes, React re-renders
         if (submittedTodo) {
             // we only want to setTodoList if submittedTodo has a value. (on reload there is no value)
-            setTodoList(todoList.concat(submittedTodo));
+            //setTodoList(todoList.concat(submittedTodo));
+            // with useReducer we dispatch an action instead: 
+            dispatch({type: 'ADD', payload: submittedTodo});
         }
         
         // we want to run this effect only when submittedTodo changes, so we check for that. 
