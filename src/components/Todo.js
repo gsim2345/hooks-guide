@@ -87,7 +87,9 @@ const Todo = props => {
             const todoItem = {id: res.data.name, name: todoName}
             console.log(res);
             // we add here instead, after the post request successeded, so we can save the id we get back
-            setTodoList(todoList.concat(todoItem));
+            //setTodoList(todoList.concat(todoItem));
+            // because setTodoList is executing asyncrunously, using that form with the prevTodoList can avoid update issues. 
+            setTodoList(prevTodoList => prevTodoList.concat(todoItem))
         })
         .catch(err => {
             console.log(err);
