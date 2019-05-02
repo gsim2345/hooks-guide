@@ -18,6 +18,9 @@ const Todo = props => {
     // item 1 => function to update state with new value
     const [todoList, setTodoList] = useState([]);
 
+    // we add another state (solution for avoiding update issues)
+    const [submittedTodo, setSubmittedTodo] = useState(null);
+
     // We can also merge states into an object: 
     // But using separate is more readable, and managable.
     //const [todoState, setTodoState] = useState({ userInput: '', todoList: []});
@@ -72,6 +75,18 @@ const Todo = props => {
     //=> cleanup happens only at when component gets destroyed. (at componentWillUnmount())
     }, [] );
 
+
+    useEffect(() => {
+        //this will run on every render cycle and a render cycle will be triggered when we call set submitted todo here because whenever the state changes, React re-renders
+        if (submittedTodo) {
+            // we only want to setTodoList if submittedTodo has a value. (on reload there is no value)
+            setTodoList(todoList.concat(submittedTodo));
+        }
+        
+        // we want to run this effect only when submittedTodo changes, so we check for that. 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [submittedTodo]);
+
     const inputChangeHandler = (event) => {
         // we execute this function to update the state with passing in the updated state
         setTodoName(event.target.value);
@@ -90,7 +105,11 @@ const Todo = props => {
                 // if we use this update, and we add new items very fast, not all of them will be rendered to the screen, as the state updates async, and doesn't allways have the correct state.
                 //setTodoList(todoList.concat(todoItem));
                 // To avoid update issues, needs to use with prevState: 
-                setTodoList(prevTodoList => prevTodoList.concat(todoItem))
+                //setTodoList(prevTodoList => prevTodoList.concat(todoItem))
+
+                // We can fix this with hooks too. (But using prevTodoList is a much better solution)
+                // not adding to the list first, but add to submittedTodo, and store there.
+                setSubmittedTodo(todoItem);
             }, 3000);
         })
         .catch(err => {
