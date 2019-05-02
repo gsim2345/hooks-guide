@@ -80,11 +80,14 @@ const Todo = props => {
     };
 
     const todoAddHandler = () => {
-        setTodoList(todoList.concat(todoName));
+        
         //setTodoState({userInput: todoState.userInput, todoList: todoState.todoList.concat(todoState.userInput)});
-        axios.post('https://test-hooks-7593f.firebaseio_.com/todos.jso', {name: todoName})
+        axios.post('https://test-hooks-7593f.firebaseio.com/todos.json', {name: todoName})
         .then(res => {
+            const todoItem = {id: res.data.name, name: todoName}
             console.log(res);
+            // we add here instead, after the post request successeded, so we can save the id we get back
+            setTodoList(todoList.concat(todoItem));
         })
         .catch(err => {
             console.log(err);
