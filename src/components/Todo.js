@@ -22,7 +22,7 @@ const Todo = props => {
     // But using separate is more readable, and managable.
     //const [todoState, setTodoState] = useState({ userInput: '', todoList: []});
     
-
+    // best to use for callback functions with side effects, fx. ajax calls, adding event listeners
     // pass a function that needs to be executed
     // will be executed when this component runs for the first time
     // if we call a function just out of useEffect that effects state, will be called during the render cycle, and it's bad for performance reasons. 
