@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useContext }from 'react';
+import AuthContext from '../auth-context';
 
+// we unlock the todo list button only if the user is authenticated. 
+const Header = props => {
 
-const header = props => (
-    <header>
-        <button onClick={props.onLoadTodos}>Todo List</button> | {' '} 
-        <button onClick={props.onLoadAuth} >Auth</button>
-    </header>
-);
+    const auth = useContext(AuthContext);
 
-export default header;
+    return (
+        <header>
+            { auth.status ? <button onClick={props.onLoadTodos}>Todo List</button> : null} 
+            <button onClick={props.onLoadAuth} >Auth</button>
+        </header>
+    )
+}
+
+export default Header;
