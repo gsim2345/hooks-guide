@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer} from 'react';
+import React, { useState, useEffect, useReducer, useRef } from 'react';
 import axios from 'axios';
 
 
@@ -12,7 +12,8 @@ const Todo = props => {
     //1. inputState[1] - Reference to a function, that we can execute to update the state. that returns the full event object. - 
 
     // we use array destructuring. We can pull out elements of an array, and store them in separate variables.
-    const [todoName, setTodoName] = useState('');
+    //we don't need that anymore if we use useRef:
+    //const [todoName, setTodoName] = useState('');
     // we can add as much new state as we want:
     // item 0 => curent state (todoList)
     // item 1 => function to update state with new value
@@ -22,6 +23,10 @@ const Todo = props => {
     // we add another state (solution for avoiding update issues)
     // const [submittedTodo, setSubmittedTodo] = useState(null);
     // we can remove the submittedTodos now, we can solve it with useReducer
+
+
+    // can pass in an initial value
+    const todoInputRef = useRef();
 
     const todoListReducer = (state, action) => {
         switch(action.type) {
@@ -118,14 +123,19 @@ const Todo = props => {
     }, [submittedTodo]);
     */
 
+    /* we don't need that anymore if we use useRef, because we are not updating this value with onChange anymore, instead we use the internal state management of the input element and use a ref to extract its current value
     const inputChangeHandler = (event) => {
         // we execute this function to update the state with passing in the updated state
         setTodoName(event.target.value);
         // Need to set both, as it doesn't merge with the old state, but simply replacing it. 
         //setTodoState({userInput: event.target.value, todoList: todoState.todoList});
-    };
+    };*/ 
 
     const todoAddHandler = () => {
+
+        // we get the value of this input item (it refers to an object)
+        // the 'current' property holds the HTML reference, where we can access value.
+        const todoName = todoInputRef.current.value;
         
         //setTodoState({userInput: todoState.userInput, todoList: todoState.todoList.concat(todoState.userInput)});
         axios.post('https://test-hooks-7593f.firebaseio.com/todos.json', {name: todoName})
@@ -165,8 +175,9 @@ const Todo = props => {
         
     }
 
+    // if we don't want to get the value and set the value through todoName, we can also use a Reference
     return <React.Fragment>
-        <input type="text" placeholder="Todo" onChange={inputChangeHandler} value={todoName}/>
+        <input type="text" placeholder="Todo" ref={todoInputRef}/>
         <button type="button" onClick={todoAddHandler}>Add</button>
         <ul>
             {todoList.map(todo => (
