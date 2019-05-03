@@ -145,12 +145,26 @@ const Todo = props => {
         });
     }
 
+    const todoRemoveHandler = todoId => {
+        // removes from the backend:
+        // we use template literal to dynamically delete
+        axios.delete(`https://test-hooks-7593f.firebaseio.com/todos/${todoId}.json`)
+        .then(res => {
+            // removes on the frontend
+            dispatch({type: "REMOVE", payload: todoId})
+        })
+        .catch(err => {
+            console.log(err)
+        })
+        
+    }
+
     return <React.Fragment>
         <input type="text" placeholder="Todo" onChange={inputChangeHandler} value={todoName}/>
         <button type="button" onClick={todoAddHandler}>Add</button>
         <ul>
             {todoList.map(todo => (
-                <li key={todo.id}>{todo.name}</li>
+                <li key={todo.id} onClick={todoRemoveHandler.bind(this, todo.id)}>{todo.name}</li>
             ))}
         </ul>
     </React.Fragment>
