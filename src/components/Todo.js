@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useRef } from 'react';
+import React, { useState, useEffect, useReducer, useRef, useMemo } from 'react';
 import axios from 'axios';
 import List from './List';
 
@@ -23,6 +23,8 @@ const Todo = props => {
     // const [submittedTodo, setSubmittedTodo] = useState(null);
     // we can remove the submittedTodos now, we can solve it with useReducer
 
+    // a new state for for validationhandling
+    const [inputIsValid, setInputIsValid] = useState(false);
 
     // can pass in an initial value
     const todoInputRef = useRef();
@@ -93,18 +95,19 @@ const Todo = props => {
     // example for cleanup
     // in this case useEffect will be called at every render cycle, and will add new event listeners at every render. 
     // results in really bad performance. 
-    // we want to clean up the old listener before we attach a new one. 
+    // we want to clean up the old listener before we attach a new one.
+    /* remove so doesn't log on every mouse move and we can read the log
     useEffect(() => {
         // listening to mouse movements
         document.addEventListener('mousemove', mouseMoveHandler);
         // add a cleanup function here:
         return () => {
             document.removeEventListener('mousemove', mouseMoveHandler);
-        }
+        } 
     // by adding [] 
     //=> adding event listener only when component gets loaded 
     //=> cleanup happens only at when component gets destroyed. (at componentWillUnmount())
-    }, [] );
+    }, [] ); */
 
 
     /* Not needed anymore with useReducer
@@ -174,12 +177,34 @@ const Todo = props => {
         
     }
 
+    const inputValidationHandler = event => {
+        if (event.target.value.trim() === '') {
+            setInputIsValid(false);
+        } else {
+            setInputIsValid(true);
+        }
+    }
+
     // if we don't want to get the value and set the value through todoName, we can also use a Reference
     return <React.Fragment>
-        <input type="text" placeholder="Todo" ref={todoInputRef}/>
+        <input 
+            type="text" 
+            placeholder="Todo" 
+            ref={todoInputRef}
+            onChange={inputValidationHandler} 
+            style={{backgroundColor: inputIsValid? 'transparent' : 'red'}}
+        />
         <button type="button" onClick={todoAddHandler}>Add</button>
-        <List items={todoList} onClick={todoRemoveHandler}/>
+        
+        {useMemo(() => (<List items={todoList} onClick={todoRemoveHandler}/>), [todoList])}
     </React.Fragment>
+    //useMemo takes a function as first argument, that returns a value
+    // 2. argument: an array where we list all the arguments we want React to watch out for.
+    // it's caching values if the input doesn't change
+    // if todoList and todoRemoveHandler doesn't change, we don't want to regenerate the component, just using the one with the 'cached value"
+    // if one of the arguments in the array is changing, the component should rerun, and a new value gets generated
+    // in this case we only want to rerender  the item, if the todoList is changing
+    //useMemo can be used with any calculation, doesn't have to be a rendered React component, you could also have some other logic where you do something with the todoList or with anything else and you want to use the old value and not rerun the calculation. 
 };
 
 export default Todo;
