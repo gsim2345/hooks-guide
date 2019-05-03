@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useReducer, useRef, useMemo } from 'react';
 import axios from 'axios';
 import List from './List';
+import { useFormInput } from '../hooks/forms';
 
 const Todo = props => {
     // Hooks always has to be at the top of the component, at root level. No nesting.
@@ -27,7 +28,11 @@ const Todo = props => {
     const [inputIsValid, setInputIsValid] = useState(false);
 
     // can pass in an initial value
-    const todoInputRef = useRef();
+    //const todoInputRef = useRef();
+
+    // adding our custom hook
+    // returns that object with all the logic it needs to handle validity and so on
+    const todoInput = useFormInput();
 
     const todoListReducer = (state, action) => {
         switch(action.type) {
@@ -137,7 +142,7 @@ const Todo = props => {
 
         // we get the value of this input item (it refers to an object)
         // the 'current' property holds the HTML reference, where we can access value.
-        const todoName = todoInputRef.current.value;
+        const todoName = todoInput.value;
         
         //setTodoState({userInput: todoState.userInput, todoList: todoState.todoList.concat(todoState.userInput)});
         axios.post('https://test-hooks-7593f.firebaseio.com/todos.json', {name: todoName})
@@ -190,9 +195,9 @@ const Todo = props => {
         <input 
             type="text" 
             placeholder="Todo" 
-            ref={todoInputRef}
-            onChange={inputValidationHandler} 
-            style={{backgroundColor: inputIsValid? 'transparent' : 'red'}}
+            onChange={todoInput.onChange}
+            value={todoInput.value}
+            style={{backgroundColor: todoInput.validity === true ? 'transparent' : 'red'}}
         />
         <button type="button" onClick={todoAddHandler}>Add</button>
         
