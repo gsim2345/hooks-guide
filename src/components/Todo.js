@@ -20,7 +20,8 @@ const Todo = props => {
     //const [todoList, setTodoList] = useState([]);
 
     // we add another state (solution for avoiding update issues)
-    const [submittedTodo, setSubmittedTodo] = useState(null);
+    // const [submittedTodo, setSubmittedTodo] = useState(null);
+    // we can remove the submittedTodos now, we can solve it with useReducer
 
     const todoListReducer = (state, action) => {
         switch(action.type) {
@@ -102,6 +103,7 @@ const Todo = props => {
     }, [] );
 
 
+    /* Not needed anymore with useReducer
     useEffect(() => {
         //this will run on every render cycle and a render cycle will be triggered when we call set submitted todo here because whenever the state changes, React re-renders
         if (submittedTodo) {
@@ -114,6 +116,7 @@ const Todo = props => {
         // we want to run this effect only when submittedTodo changes, so we check for that. 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [submittedTodo]);
+    */
 
     const inputChangeHandler = (event) => {
         // we execute this function to update the state with passing in the updated state
@@ -137,7 +140,10 @@ const Todo = props => {
 
                 // We can fix this with hooks too. (But using prevTodoList is a much better solution)
                 // not adding to the list first, but add to submittedTodo, and store there.
-                setSubmittedTodo(todoItem);
+                //setSubmittedTodo(todoItem); - not needed anymore, we dispatch action instead
+                dispatch({type: 'ADD', payload: todoItem})
+                // it works because it has changed how we set the state. Reducer always receives the latest state, and then manipulates it. 
+
             }, 3000);
         })
         .catch(err => {
